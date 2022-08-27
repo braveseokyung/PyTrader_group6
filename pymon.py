@@ -18,8 +18,21 @@ class PyMon:
 
     # noinspection PyMethodMayBeStatic
     def run(self):
-        df = self.get_ohlcv('039490', '20220701')
-        print(df)
+        buy_list = []
+        num = len(self.kosdaq_codes)
+
+        for i, code in enumerate(self.kosdaq_codes):
+            print(f'{i}/{num}')
+            if self.check_speedy_rising_volume(code):
+                buy_list.append(code)
+
+        self.update_buy_list(buy_list)
+
+    def update_buy_list(self, but_list):
+        f = open('but_list.txt', 'wt')
+        for code in but_list:
+            f.writelines(f'매수;{code};시장가;10;0;매수전\n')
+        f.close()
 
     # noinspection PyMethodMayBeStatic
     def get_code_list(self):
@@ -39,6 +52,29 @@ class PyMon:
                        index=self.kiwoom.ohlcv['date'])
 
         return df
+
+    def check_speedy_rising_volume(self, code):
+        today = datetime.datetime.today().strftime('%Y%m%d')
+        df = self.get_ohlcv(code, today)
+        volumes = df['volume']
+
+        if len(volumes) < 21:
+            return False
+
+        sum_vol20 = 0
+        today_vol = 0
+
+        for i, vol in enumerate(volumes):
+            if i == 0:
+                today_vol = vol
+            elif 1 <= i <= 20:
+                sum_vol20 += vol
+            else:
+                break
+
+        avg_vol20 = sum_vol20 / 20
+        if today_vol > avg_vol20 * 10:
+            return True
 
     # noinspection PyMethodMayBeStatic
     def calculate_estimated_dividend_to_treasury(self, code):
