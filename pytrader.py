@@ -2,7 +2,7 @@ import sys
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
 from PyQt5 import uic
-from Kiwoom_ing import *
+from Kiwoom import *
 
 form_class=uic.loadUiType("pytrader.ui")[0]
 
