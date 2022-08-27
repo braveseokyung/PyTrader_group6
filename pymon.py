@@ -1,13 +1,28 @@
 import sys
 from PyQt5.QtWidgets import *
+import Kiwoom
 import datetime
 import webreader
 import numpy as np
 
+MARKET_KOSPI = 0
+MARKET_KOSDAQ = 10
+
 
 class PyMon:
     def __init__(self):
-        pass
+        self.kiwoom = Kiwoom.Kiwoom()
+        self.kiwoom.comm_connect()
+
+    # noinspection PyMethodMayBeStatic
+    def run(self):
+        print(self.kospi_codes)
+        print(self.kosdaq_codes)
+
+    # noinspection PyMethodMayBeStatic
+    def get_code_list(self):
+        self.kospi_codes = self.kiwoom.get_code_list_by_market(MARKET_KOSPI)
+        self.kosdaq_codes = self.kiwoom.get_code_list_by_market(MARKET_KOSDAQ)
 
     # noinspection PyMethodMayBeStatic
     def calculate_estimated_dividend_to_treasury(self, code):
